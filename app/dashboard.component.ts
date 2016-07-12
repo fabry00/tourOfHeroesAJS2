@@ -21,7 +21,7 @@ export class DashboardComponent {
 
     ngOnInit() {
         this.heroService
-            .getHeroesSlowly()
+            .getHeroes()
             .then(heroes => this.heroes = heroes.slice(1, 5));
     }
 
