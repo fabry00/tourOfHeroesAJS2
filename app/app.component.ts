@@ -1,19 +1,10 @@
 import { Component } from '@angular/core';
+import { OnInit } from '@angular/core';
 import { Hero } from './hero';
+import { HeroService } from './hero.service';
 import { HeroDetailComponent } from './hero-detail.component';
 
-const HEROES: Hero[] = [
-  { id: 11, name: 'Mr. Nice' },
-  { id: 12, name: 'Narco' },
-  { id: 13, name: 'Bombasto' },
-  { id: 14, name: 'Celeritas' },
-  { id: 15, name: 'Magneta' },
-  { id: 16, name: 'RubberMan' },
-  { id: 17, name: 'Dynama' },
-  { id: 18, name: 'Dr IQ' },
-  { id: 19, name: 'Magma' },
-  { id: 20, name: 'Tornado' }
-];
+
 
 @Component({
   selector: 'my-app',
@@ -77,17 +68,45 @@ const HEROES: Hero[] = [
      </li>
     </ul>
     <my-hero-detail [hero]="selectedHero"></my-hero-detail>
-    `
+    `,
+   providers: [HeroService]
 })
 
-export class AppComponent {
-  public heroes = HEROES;
-  
+export class AppComponent implements OnInit{
+  public heroes: Hero[];
   title = 'Tour of Heroes';
   selectedHero: Hero;
 
+  constructor(private heroService: HeroService) {
+        /*
+          AppComponent should fetch and display heroes without a fuss. Where do we call the getHeroes method? In a constructor? We do not!
+          Years of experience and bitter tears have taught us to keep complex logic out of the constructor, especially anything that might 
+          call a server as a data access method is sure to do.
+          The constructor is for simple initializations like wiring constructor parameters to properties. It's not for heavy lifting. 
+          We should be able to create a component in a test and not worry that it might do real work  like calling a server!  before we tell it to do so.
+
+          Angular will call it if we implement the Angular ngOnInit Lifecycle Hook
+        */ 
+  }
+ 
+  ngOnInit() {
+   // We write an ngOnInit method with our initialization logic inside and leave it to Angular to call it at the right time. In our case, we initialize by calling getHeroes.
+   this.getHeroes();
+  }
+
   onSelect(hero: Hero) { 
     this.selectedHero = hero; 
+  }
+
+  getHeroes() {
+    // We pass our callback function as an argument to the Promise's then method:
+    // The ES2015 arrow function : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+    // Arrow function compare example: 
+    // var a2 = a.map(function(s){ return s.length });
+    // var a3 = a.map( s => s.length );
+
+    // Our callback sets the component's heroes property to the array of heroes returned by the service. That's all there is to it!
+    this.heroService.getHeroesSlowly().then(heroes => this.heroes = heroes);
   }
 }
 
