@@ -9,48 +9,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var router_1 = require('@angular/router');
 var hero_service_1 = require('./hero.service');
-var hero_detail_component_1 = require('./hero-detail.component');
 var AppComponent = (function () {
-    function AppComponent(heroService) {
-        this.heroService = heroService;
+    function AppComponent() {
         this.title = 'Tour of Heroes';
-        /*
-          AppComponent should fetch and display heroes without a fuss. Where do we call the getHeroes method? In a constructor? We do not!
-          Years of experience and bitter tears have taught us to keep complex logic out of the constructor, especially anything that might
-          call a server as a data access method is sure to do.
-          The constructor is for simple initializations like wiring constructor parameters to properties. It's not for heavy lifting.
-          We should be able to create a component in a test and not worry that it might do real work  like calling a server!  before we tell it to do so.
-
-          Angular will call it if we implement the Angular ngOnInit Lifecycle Hook
-        */
     }
-    AppComponent.prototype.ngOnInit = function () {
-        // We write an ngOnInit method with our initialization logic inside and leave it to Angular to call it at the right time. In our case, we initialize by calling getHeroes.
-        this.getHeroes();
-    };
-    AppComponent.prototype.onSelect = function (hero) {
-        this.selectedHero = hero;
-    };
-    AppComponent.prototype.getHeroes = function () {
-        // We pass our callback function as an argument to the Promise's then method:
-        // The ES2015 arrow function : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
-        // Arrow function compare example: 
-        // var a2 = a.map(function(s){ return s.length });
-        // var a3 = a.map( s => s.length );
-        var _this = this;
-        // Our callback sets the component's heroes property to the array of heroes returned by the service. That's all there is to it!
-        this.heroService.getHeroesSlowly().then(function (heroes) { return _this.heroes = heroes; });
-    };
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            styles: ["\n          .selected {\n            background-color: #CFD8DC !important;\n            color: white;\n          }\n          .heroes {\n            margin: 0 0 2em 0;\n            list-style-type: none;\n            padding: 0;\n            width: 15em;\n          }\n          .heroes li {\n            cursor: pointer;\n            position: relative;\n            left: 0;\n            background-color: #EEE;\n            margin: .5em;\n            padding: .3em 0;\n            height: 1.6em;\n            border-radius: 4px;\n          }\n          .heroes li.selected:hover {\n            background-color: #BBD8DC !important;\n            color: white;\n          }\n          .heroes li:hover {\n            color: #607D8B;\n            background-color: #DDD;\n            left: .1em;\n          }\n          .heroes .text {\n            position: relative;\n            top: -3px;\n          }\n          .heroes .badge {\n            display: inline-block;\n            font-size: small;\n            color: white;\n            padding: 0.8em 0.7em 0 0.7em;\n            background-color: #607D8B;\n            line-height: 1em;\n            position: relative;\n            left: -1px;\n            top: -4px;\n            height: 1.8em;\n            margin-right: .8em;\n            border-radius: 4px 0 0 4px;\n          }\n        "],
-            directives: [hero_detail_component_1.HeroDetailComponent],
-            template: "\n    <h1>{{title}}</h1>\n\n    <h2>My Heroes</h2>\n    <ul class=\"heroes\">\n     <li *ngFor=\"let hero of heroes\" (click)=\"onSelect(hero)\" [class.selected]=\"hero === selectedHero\">\n      <span class=\"badge\">{{hero.id}}</span> {{hero.name}}\n     </li>\n    </ul>\n    <my-hero-detail [hero]=\"selectedHero\"></my-hero-detail>\n    ",
-            providers: [hero_service_1.HeroService]
+            styleUrls: ['app/app.component.css'],
+            template: "\n    <h1>{{title}}</h1>\n    <nav>\n      <a [routerLink]=\"['/dashboard']\" routerLinkActive=\"active\">Dashboard</a>\n      <a [routerLink]=\"['/heroes']\" routerLinkActive=\"active\">Heroes</a>\n    </nav>\n    <router-outlet></router-outlet>\n  ",
+            //The Angular Router provides a routerLinkActive directive we can use to to add a class to the HTML navigation element whose route matches the active route. All we have to do is define the style for it. Sweet!
+            directives: [router_1.ROUTER_DIRECTIVES],
+            providers: [
+                /**
+                 * We'd like to re-use the HeroService to populate the component's heroes array.
+                 * Recall earlier in the chapter that we removed the HeroService from the providers array of the HeroesComponent and added it to the providers array of the top level AppComponent.
+                 * That move created a singleton HeroService instance, available to all components of the application. Angular will inject HeroService and we'll use it here in the DashboardComponent.
+                 */
+                hero_service_1.HeroService
+            ]
         }), 
-        __metadata('design:paramtypes', [hero_service_1.HeroService])
+        __metadata('design:paramtypes', [])
     ], AppComponent);
     return AppComponent;
 }());
